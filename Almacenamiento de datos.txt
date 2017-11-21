@@ -1,0 +1,72 @@
+// Importamos las librerias necesarias 
+#include <Wire.h>
+#include <LCD.h>
+#include <LiquidCrystal_I2C.h> 
+
+
+//declaración de variables
+
+#define  LED_OFF  0
+#define  LED_ON  1
+float tempC;
+int tempPin = 0;// pin A0
+
+
+LiquidCrystal_I2C lcd(I2C_ADDR, 4, 5, 6, 0, 1, 2, 3, 7, NEGATIVE);
+
+void setup()  
+{
+  lcd.begin (16,2);  // inicializar lcd 
+// Activamos la retroiluminacion
+  lcd.setBacklight(LED_ON);
+  //PUERTO SERIAL A 9600 BPS
+    Serial.begin(9600);
+
+}
+
+void loop()
+{
+
+// Reset the display  
+  lcd.clear();
+  lcd.setBacklight(LED_OFF);//Backlight OFF 
+  delay(500); 
+
+  lcd.backlight(); //Backlight ON 
+  lcd.setCursor(0,0);
+  lcd.print("Hola Geekytheory"); 
+  lcd.setCursor(0,1);
+  lcd.print("LCD por I2C"); 
+  delay(2000); 
+
+    //lectura del sensor
+    tempC=(5.0 * tempC * 100.0)/1024.0;
+
+    //Enviar Datos
+    Serial.print(tempC);
+    Serial.print("grados Celsius\n");
+
+    //5 seg para loop
+    delay(5000);
+}
+
+
+//guardar datos en un txt
+
+require 'serialport'
+
+filename = 'log.txt'
+
+port_str  = 2
+baud_rate = 9600
+data_bits = 8
+stop_bits = 1
+parity    = SerialPort::NONE
+ trap("INT") { puts "Apagando."; exit}
+target = File.new(filename, 'w')
+sp = SerialPort.new(port_str, baud_rate, data_bits, stop_bits, parity)
+while(true) do
+  message = (sp.gets)
+   print message
+  target.write(message)
+ end
